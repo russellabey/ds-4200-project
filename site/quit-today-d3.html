@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What if I quit today? (D3)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <nav class="site-nav" aria-label="Page">
+      <a href="age.html">Back to Age page</a>
+      <span class="nav-sep">|</span>
+      <a href="index.html">Home</a>
+    </nav>
+
+    <h1>What if I quit today? (D3)</h1>
+    <p id="load-err" class="quit-err" hidden></p>
+
+    <div class="quit-controls" id="controls" hidden>
+      <label>Current pack-years: <strong id="py-val"></strong>
+        <input type="range" id="py-slider" />
+      </label>
+      <label>Cigarettes per day: <strong id="cpd-val"></strong>
+        <input type="range" id="cpd-slider" />
+      </label>
+    </div>
+    <svg id="quit-chart-svg"></svg>
+  </main>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="quit-today-d3.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age and risk</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <main>
+    <nav class="site-nav" aria-label="Page">
+      <a href="lifestyle.html">Previous</a>
+      <span class="nav-sep">|</span>
+      <span>Page 3 of 4</span>
+      <span class="nav-sep">|</span>
+      <a href="history.html">Next: Medical history</a>
+    </nav>
+
+    <h1>Age and gender</h1>
+
+    <p>The figure is a line graph of lung cancer risk by age and gender. The data is binned in 3-year groups and interpolated to reduce outlier impact. While inconsistent at certain ages, there is an overall trend that lung cancer risk increases with age. Males also have an increased risk compared to females, though the difference is relatively small.</p>
+
+    <figure class="chart-fig">
+      <img src="../assets/age-line.png" alt="Line chart: lung cancer risk by age and gender">
+    </figure>
+
+    <h2>What if I quit today?</h2>
+
+    <p>This interactive chart can help someone who is considering quitting to see the impact if they quit at the current moment. This can help someone who is unsure about the current and future risks of their smoking habits. With the sliders, someone can fit their habits and see how if they continue to smoke, the risks continue to escalate.</p>
+    <p id="load-err" class="quit-err" hidden></p>
+
+    <div class="quit-controls" id="controls" hidden>
+      <label>Current pack-years: <strong id="py-val"></strong>
+        <input type="range" id="py-slider" />
+      </label>
+      <label>Cigarettes per day: <strong id="cpd-val"></strong>
+        <input type="range" id="cpd-slider" />
+      </label>
+    </div>
+    <svg id="quit-chart-svg"></svg>
+
+    <footer class="site-footer">
+      <a href="lifestyle.html">Page 2</a> · <a href="history.html">Page 4</a>
+    </footer>
+  </main>
+
+  <script src="quit-today-d3.js"></script>
+</body>
+</html>
