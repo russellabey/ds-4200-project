@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Age and risk</title>
+  <title>Line graph: age vs. elevated lung cancer risk</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,16 +16,16 @@
       <a href="history.html">Next: What if I quit?</a>
     </nav>
 
-    <h1>Age and gender</h1>
+    <h1>Line Graph of Age vs. Chance to be at Elevated Risk of Lung Cancer</h1>
 
-    <p>The figure is a line graph of lung cancer risk by age and gender. The data is binned in 3-year groups and interpolated to reduce outlier impact. While inconsistent at certain ages, there is an overall trend that lung cancer risk increases with age. Males also have an increased risk compared to females, though the difference is relatively small.</p>
+    <p>The figure is an interpolated line plot showing the chance to be at elevated risk of lung cancer based on age and gender, matching the dual-line chart in visualizations_other.ipynb (mean risk by binned age, separate lines for female and male). Age uses up to 30 bins with basis interpolation to smooth across bins. While uneven at some ages, risk broadly rises with age; males average slightly higher than females.</p>
 
     <figure class="chart-fig chart-fig--vega">
       <div
         class="vl-chart-host"
         data-vl-spec="../assets/age-line.vl.json"
         role="img"
-        aria-label="Line chart: lung cancer risk by age and gender"
+        aria-label="Line Graph of Age vs. Chance to be at Elevated Risk of Lung Cancer. Two lines: Female and Male, mean lung cancer risk by age."
       ></div>
     </figure>
 

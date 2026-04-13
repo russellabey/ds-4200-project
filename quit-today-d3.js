@@ -55,9 +55,9 @@
       const controls = document.getElementById("controls");
       if (controls) controls.hidden = false;
 
-      const margin = { top: 24, right: 20, bottom: 48, left: 56 };
+      const margin = { top: 44, right: 20, bottom: 48, left: 56 };
       const plotWidth = 720 - margin.left - margin.right;
-      const plotHeight = 300 - margin.top - margin.bottom;
+      const plotHeight = 320 - margin.top - margin.bottom;
       const chartWidth = plotWidth + margin.left + margin.right;
       const chartHeight = plotHeight + margin.top + margin.bottom;
 
@@ -70,6 +70,17 @@
       const chartGroup = svg
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      svg
+        .append("text")
+        .attr("x", margin.left + plotWidth / 2)
+        .attr("y", 28)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#1a1a1a")
+        .attr("font-family", "system-ui, sans-serif")
+        .attr("font-size", 16)
+        .attr("font-weight", "600")
+        .text("What if I Quit Today?");
 
       const xScale = d3.scaleLinear().domain([-horizonYears, horizonYears]).range([0, plotWidth]);
       const yScale = d3.scaleLinear().domain([0, 100]).range([plotHeight, 0]);
