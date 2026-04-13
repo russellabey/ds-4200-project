@@ -1,149 +1,173 @@
 (function () {
   if (typeof d3 === "undefined") return;
 
-  const DATA_URL = "../assets/quit-today-curve.json";
+  const curveJsonUrl = "../assets/quit-today-curve.json";
 
-  function riskFromPY(py, c) {
-    if (py <= c[0][0]) return c[0][1];
-    if (py >= c[c.length - 1][0]) return c[c.length - 1][1];
-    let i = 0;
-    while (i < c.length - 1 && c[i + 1][0] < py) i++;
-    const [x0, y0] = c[i],
-      [x1, y1] = c[i + 1];
-    return y0 + ((py - x0) / (x1 - x0)) * (y1 - y0);
+  function riskAtPackYears(packYears, curve) {
+    if (packYears <= curve[0][0]) return curve[0][1];
+    if (packYears >= curve[curve.length - 1][0]) return curve[curve.length - 1][1];
+    let segment = 0;
+    while (segment < curve.length - 1 && curve[segment + 1][0] < packYears) segment++;
+    const [packLo, riskLo] = curve[segment];
+    const [packHi, riskHi] = curve[segment + 1];
+    return riskLo + ((packYears - packLo) / (packHi - packLo)) * (riskHi - riskLo);
   }
 
-  fetch(DATA_URL)
-    .then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
+  fetch(curveJsonUrl)
+    .then(function (response) {
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return response.json();
     })
-    .then(function (cfg) {
-      const curve = cfg.curve;
-      const H = cfg.horizonYears;
-      const pyMin = cfg.ranges.packYears.min;
-      const pyMax = cfg.ranges.packYears.max;
-      const pyStep = cfg.pyStep;
-      const cpdLo = Math.round(cfg.ranges.cigsPerDay.min);
-      const cpdHi = Math.round(cfg.ranges.cigsPerDay.max);
-      const nPy = Math.max(1, Math.round((pyMax - pyMin) / pyStep));
-      const pyIdx = Math.max(0, Math.min(nPy, Math.round((cfg.defaults.packYears - pyMin) / pyStep)));
-      const cpd = Math.max(cpdLo, Math.min(cpdHi, Math.round(cfg.defaults.cigsPerDay)));
+    .then(function (config) {
+      const empiricalCurve = config.curve;
+      const horizonYears = config.horizonYears;
+      const packYearsMin = config.ranges.packYears.min;
+      const packYearsMax = config.ranges.packYears.max;
+      const packYearsStep = config.pyStep;
+      const cigsPerDayMin = Math.round(config.ranges.cigsPerDay.min);
+      const cigsPerDayMax = Math.round(config.ranges.cigsPerDay.max);
+      const packYearSliderSteps = Math.max(1, Math.round((packYearsMax - packYearsMin) / packYearsStep));
+      const startingPackSliderValue = Math.max(
+        0,
+        Math.min(packYearSliderSteps, Math.round((config.defaults.packYears - packYearsMin) / packYearsStep))
+      );
+      const startingCigsPerDay = Math.max(
+        cigsPerDayMin,
+        Math.min(cigsPerDayMax, Math.round(config.defaults.cigsPerDay))
+      );
 
-      const pySlider = document.getElementById("py-slider");
-      const cpdSlider = document.getElementById("cpd-slider");
-      const pyVal = document.getElementById("py-val");
-      const cpdVal = document.getElementById("cpd-val");
-      const svgEl = document.getElementById("quit-chart-svg");
-      if (!pySlider || !cpdSlider || !svgEl) return;
+      const packYearsSlider = document.getElementById("py-slider");
+      const cigsPerDaySlider = document.getElementById("cpd-slider");
+      const packYearsReadout = document.getElementById("py-val");
+      const cigsPerDayReadout = document.getElementById("cpd-val");
+      const chartSvg = document.getElementById("quit-chart-svg");
+      if (!packYearsSlider || !cigsPerDaySlider || !chartSvg) return;
 
-      pySlider.min = 0;
-      pySlider.max = nPy;
-      pySlider.step = 1;
-      pySlider.value = pyIdx;
-      cpdSlider.min = cpdLo;
-      cpdSlider.max = cpdHi;
-      cpdSlider.step = 1;
-      cpdSlider.value = cpd;
+      packYearsSlider.min = 0;
+      packYearsSlider.max = packYearSliderSteps;
+      packYearsSlider.step = 1;
+      packYearsSlider.value = startingPackSliderValue;
+      cigsPerDaySlider.min = cigsPerDayMin;
+      cigsPerDaySlider.max = cigsPerDayMax;
+      cigsPerDaySlider.step = 1;
+      cigsPerDaySlider.value = startingCigsPerDay;
 
-      var controls = document.getElementById("controls");
+      const controls = document.getElementById("controls");
       if (controls) controls.hidden = false;
 
-      var m = { t: 24, r: 20, b: 48, l: 56 };
-      var w = 720 - m.l - m.r;
-      var h = 300 - m.t - m.b;
-      var svgW = w + m.l + m.r;
-      var svgH = h + m.t + m.b;
+      const margin = { top: 24, right: 20, bottom: 48, left: 56 };
+      const plotWidth = 720 - margin.left - margin.right;
+      const plotHeight = 300 - margin.top - margin.bottom;
+      const chartWidth = plotWidth + margin.left + margin.right;
+      const chartHeight = plotHeight + margin.top + margin.bottom;
 
-      var svg = d3
-        .select(svgEl)
-        .attr("width", svgW)
-        .attr("height", svgH)
+      const svg = d3
+        .select(chartSvg)
+        .attr("width", chartWidth)
+        .attr("height", chartHeight)
         .attr("overflow", "visible");
-      var g = svg.append("g").attr("transform", "translate(" + m.l + "," + m.t + ")");
+      const chartGroup = svg
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      var x = d3.scaleLinear().domain([-H, H]).range([0, w]);
-      var y = d3.scaleLinear().domain([0, 100]).range([h, 0]);
+      const xScale = d3.scaleLinear().domain([-horizonYears, horizonYears]).range([0, plotWidth]);
+      const yScale = d3.scaleLinear().domain([0, 100]).range([plotHeight, 0]);
 
-      g.append("line")
-        .attr("x1", x(0))
-        .attr("x2", x(0))
+      chartGroup
+        .append("line")
+        .attr("x1", xScale(0))
+        .attr("x2", xScale(0))
         .attr("y1", 0)
-        .attr("y2", h)
+        .attr("y2", plotHeight)
         .attr("stroke", "#9ca3af")
         .attr("stroke-dasharray", "4 4");
 
-      g.append("g")
-        .attr("transform", "translate(0," + h + ")")
-        .call(d3.axisBottom(x).ticks(Math.min(2 * H + 1, 12)).tickFormat(d3.format("d")));
+      chartGroup
+        .append("g")
+        .attr("transform", "translate(0," + plotHeight + ")")
+        .call(
+          d3
+            .axisBottom(xScale)
+            .ticks(Math.min(2 * horizonYears + 1, 12))
+            .tickFormat(d3.format("d"))
+        );
 
-      g.append("g").call(d3.axisLeft(y).ticks(6));
+      chartGroup.append("g").call(d3.axisLeft(yScale).ticks(6));
 
       svg
         .append("text")
-        .attr("x", m.l + w / 2)
-        .attr("y", svgH - 8)
+        .attr("x", margin.left + plotWidth / 2)
+        .attr("y", chartHeight - 8)
         .attr("text-anchor", "middle")
         .attr("fill", "#1a1a1a")
         .text("Years from today");
 
       svg
         .append("text")
-        .attr("transform", "translate(" + m.l / 2 + "," + (m.t + h / 2) + ") rotate(-90)")
+        .attr(
+          "transform",
+          "translate(" + margin.left / 2 + "," + (margin.top + plotHeight / 2) + ") rotate(-90)"
+        )
         .attr("text-anchor", "middle")
         .attr("fill", "#1a1a1a")
         .text("Chance of Cancer");
 
-      var lineGen = d3
+      const linePath = d3
         .line()
-        .x(function (d) {
-          return x(d.year);
+        .x(function (point) {
+          return xScale(point.year);
         })
-        .y(function (d) {
-          return y(d.risk);
+        .y(function (point) {
+          return yScale(point.risk);
         });
 
-      var lineKeep = g
+      const pathKeepSmoking = chartGroup
         .append("path")
         .attr("fill", "none")
         .attr("stroke", "#dc2626")
         .attr("stroke-width", 2);
-      var lineQuit = g
+      const pathQuitToday = chartGroup
         .append("path")
         .attr("fill", "none")
         .attr("stroke", "#2563eb")
         .attr("stroke-width", 2);
 
       function redraw() {
-        var py0 = pyMin + pyStep * +pySlider.value;
-        var cpdN = +cpdSlider.value;
-        pyVal.textContent = py0.toFixed(1);
-        cpdVal.textContent = String(cpdN);
+        const packYearsToday = packYearsMin + packYearsStep * +packYearsSlider.value;
+        const cigsPerDay = +cigsPerDaySlider.value;
+        packYearsReadout.textContent = packYearsToday.toFixed(1);
+        cigsPerDayReadout.textContent = String(cigsPerDay);
 
-        var keep = [];
-        for (var yr = -H; yr <= H; yr++) {
-          var pyT = Math.max(0, py0 + (cpdN / 20) * yr);
-          keep.push({ year: yr, risk: riskFromPY(pyT, curve) });
+        const pointsKeepSmoking = [];
+        for (let yearFromToday = -horizonYears; yearFromToday <= horizonYears; yearFromToday++) {
+          const packYearsAtThatYear = Math.max(0, packYearsToday + (cigsPerDay / 20) * yearFromToday);
+          pointsKeepSmoking.push({
+            year: yearFromToday,
+            risk: riskAtPackYears(packYearsAtThatYear, empiricalCurve),
+          });
         }
-        var q = riskFromPY(py0, curve);
-        var quit = [];
-        for (var yq = 0; yq <= H; yq++) quit.push({ year: yq, risk: q });
 
-        lineKeep.datum(keep).attr("d", lineGen);
-        lineQuit.datum(quit).attr("d", lineGen);
+        const riskIfQuitToday = riskAtPackYears(packYearsToday, empiricalCurve);
+        const pointsQuitToday = [];
+        for (let futureYear = 0; futureYear <= horizonYears; futureYear++) {
+          pointsQuitToday.push({ year: futureYear, risk: riskIfQuitToday });
+        }
+
+        pathKeepSmoking.datum(pointsKeepSmoking).attr("d", linePath);
+        pathQuitToday.datum(pointsQuitToday).attr("d", linePath);
       }
 
-      pySlider.addEventListener("input", redraw);
-      cpdSlider.addEventListener("input", redraw);
+      packYearsSlider.addEventListener("input", redraw);
+      cigsPerDaySlider.addEventListener("input", redraw);
       redraw();
     })
-    .catch(function (e) {
-      var errEl = document.getElementById("load-err");
-      if (!errEl) return;
-      errEl.hidden = false;
-      errEl.textContent =
+    .catch(function (error) {
+      const errorMessage = document.getElementById("load-err");
+      if (!errorMessage) return;
+      errorMessage.hidden = false;
+      errorMessage.textContent =
         "Could not load chart data (" +
-        (e && e.message ? e.message : "unknown error") +
+        (error && error.message ? error.message : "unknown error") +
         "). Use a local HTTP server from the Final Project folder (not file://).";
     });
 })();
