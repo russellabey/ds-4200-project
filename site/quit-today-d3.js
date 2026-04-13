@@ -63,8 +63,9 @@
 
       const svg = d3
         .select(chartSvg)
-        .attr("width", chartWidth)
-        .attr("height", chartHeight)
+        .attr("viewBox", "0 0 " + chartWidth + " " + chartHeight)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .attr("width", "100%")
         .attr("overflow", "visible");
       const chartGroup = svg
         .append("g")

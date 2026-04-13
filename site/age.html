@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Age and risk</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <main>
@@ -14,37 +13,41 @@
       <span class="nav-sep">|</span>
       <span>Page 3 of 4</span>
       <span class="nav-sep">|</span>
-      <a href="history.html">Next: Medical history</a>
+      <a href="history.html">Next: What if I quit?</a>
     </nav>
 
     <h1>Age and gender</h1>
 
     <p>The figure is a line graph of lung cancer risk by age and gender. The data is binned in 3-year groups and interpolated to reduce outlier impact. While inconsistent at certain ages, there is an overall trend that lung cancer risk increases with age. Males also have an increased risk compared to females, though the difference is relatively small.</p>
 
-    <figure class="chart-fig">
-      <img src="../assets/age-line.png" alt="Line chart: lung cancer risk by age and gender">
+    <figure class="chart-fig chart-fig--vega">
+      <div
+        class="vl-chart-host"
+        data-vl-spec="../assets/age-line.vl.json"
+        role="img"
+        aria-label="Line chart: lung cancer risk by age and gender"
+      ></div>
     </figure>
 
-    <h2>What if I quit today?</h2>
+    <h2>Medical history</h2>
 
-    <p>This interactive chart can help someone who is considering quitting to see the impact if they quit at the current moment. This can help someone who is unsure about the current and future risks of their smoking habits. With the sliders, someone can fit their habits and see how if they continue to smoke, the risks continue to escalate.</p>
-    <p id="load-err" class="quit-err" hidden></p>
+    <p>The figure is a bar graph of lung cancer risk faceted by certain aspects of previous medical history. Chronic cough, chronic obstructive pulmonary disease (COPD), a family history of cancer, and shortness of breath are all correlated with a higher risk of lung cancer. Chronic cough, COPD, and shortness of breath show an especially high correlation, with the chance to be at elevated risk going up 70% with any of those conditions present. This data shows that personal medical history is more important than family medical history, although both appear to have an effect on lung cancer risk.</p>
 
-    <div class="quit-controls" id="controls" hidden>
-      <label>Current pack-years: <strong id="py-val"></strong>
-        <input type="range" id="py-slider" />
-      </label>
-      <label>Cigarettes per day: <strong id="cpd-val"></strong>
-        <input type="range" id="cpd-slider" />
-      </label>
-    </div>
-    <svg id="quit-chart-svg"></svg>
+    <figure class="chart-fig chart-fig--vega">
+      <div
+        class="vl-chart-host"
+        data-vl-spec="../assets/medical-history.vl.json"
+        role="img"
+        aria-label="Bar charts: chance of elevated lung cancer risk by medical history factors"
+      ></div>
+    </figure>
+
+    <p>If you find yourself in any of the higher-risk categories shown (older age and/or medical history), it could be a good idea to get regular cancer screening. Early diagnosis of cancer is one of the most important factors in treatment, and could be the difference between a controllable and terminal illness.</p>
 
     <footer class="site-footer">
       <a href="lifestyle.html">Page 2</a> · <a href="history.html">Page 4</a>
     </footer>
   </main>
-
-  <script src="quit-today-d3.js"></script>
+  <script src="vega-embed.js"></script>
 </body>
 </html>

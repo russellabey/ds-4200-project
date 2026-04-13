@@ -9,7 +9,7 @@
 <body>
   <main>
     <nav class="site-nav" aria-label="Page">
-      <a href="age.html">Back to Age page</a>
+      <a href="history.html">Back to History page</a>
       <span class="nav-sep">|</span>
       <a href="index.html">Home</a>
     </nav>
@@ -25,7 +25,9 @@
         <input type="range" id="cpd-slider" />
       </label>
     </div>
-    <svg id="quit-chart-svg"></svg>
+    <div class="quit-chart-wrap">
+      <svg id="quit-chart-svg" aria-label="Risk over time if you keep smoking versus quit today"></svg>
+    </div>
   </main>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>

@@ -1,4 +1,4 @@
-ç/* Shared layout for lung cancer visualization mini-site */
+/* Shared layout for lung cancer visualization mini-site */
 :root {
   --bg: #f6f7f5;
   --text: #1a1a1a;
@@ -26,6 +26,8 @@ body {
 main {
   max-width: 48rem;
   margin: 0 auto;
+  width: 100%;
+  min-width: 0;
 }
 
 h1 {
@@ -110,7 +112,9 @@ table.vars th {
 
 .chart-wrap {
   margin: 1.25rem 0;
-  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 #vl-chart,
@@ -128,13 +132,34 @@ figure.chart-fig img {
   display: block;
 }
 
+figure.chart-fig--vega {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+figure.chart-fig--vega .vl-chart-host {
+  min-height: 280px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+}
+
+figure.chart-fig--vega .vega-embed {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+}
+
 .vl-error {
   color: #b91c1c;
   font-family: system-ui, sans-serif;
   font-size: 0.9rem;
 }
 
-/* What if I quit today? (D3) */
+/* What if I quit today? (D3) — used on history.html */
 .quit-d3-note {
   font-size: 0.9rem;
   color: var(--muted);
@@ -167,9 +192,17 @@ figure.chart-fig img {
   font-family: system-ui, sans-serif;
 }
 
+.quit-chart-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 #quit-chart-svg {
   display: block;
+  width: 100%;
   max-width: 100%;
+  height: auto;
   overflow: visible;
 }
 
