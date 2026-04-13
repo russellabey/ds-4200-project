@@ -14,6 +14,10 @@
       <a href="lifestyle.html">Next: Lifestyle heatmap</a>
     </nav>
 
+    <h1> Analysis of Lung Cancer Risk Factors</h1>
+    <h3> Russell Abey, Victoria Charry, Arthur Raoult</h3> 
+    <h3> DS 4200 Final Project</h3>
+
     <h1>Introduction</h1>
 
     <p>For over 60 years, smoking has been known to be linked to lung cancer, yet there are still millions of people who smoke. Lung cancer remains one of the most preventable yet deadliest cancers, driven not only by tobacco use but by a complex web of environmental exposures and individual health history.</p>
@@ -22,6 +26,7 @@
 
     <p>To learn more about lung cancer research, you can check out reports from the American Association for Cancer Research e.g., <a href="https://aacrjournals.org/cebp/article/28/10/1563/71761/Cancer-Progress-and-Priorities-Lung-CancerCancer">https://aacrjournals.org/cebp/article/28/10/1563/71761/Cancer-Progress-and-Priorities-Lung-CancerCancer</a>.</p>
 
+    <p> Our analysis makes use of a dataset called ‘lung_cancer.csv’ which contains 5,000 patient entries across 30 different attributes. The detailed information about the features we decided to explicitly analyze are listed in the following table:</p>
     <h2>Variable name and details</h2>
     <table class="vars">
       <thead>
@@ -82,6 +87,14 @@
         <tr>
           <td>previous_tb</td>
           <td>Binary value indicating if the patient has had tuberculosis (1) or not (0)</td>
+        </tr>
+        <tr>
+          <td>chronic_cough</td>
+          <td>Presence of long-term cough symptoms (0 = No, 1 = Yes)</td>
+        </tr>
+        <tr>
+          <td>shortness_of_breath</td>
+          <td>Presence of breathing difficulty (0 = No, 1 = Yes)</td>
         </tr>
       </tbody>
     </table>
