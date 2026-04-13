@@ -1,7 +1,7 @@
 (function () {
   if (typeof d3 === "undefined") return;
 
-  const curveJsonUrl = "../assets/quit-today-curve.json";
+  const curveJsonUrl = "quit-today-curve.json";
 
   function riskAtPackYears(packYears, curve) {
     if (packYears <= curve[0][0]) return curve[0][1];
